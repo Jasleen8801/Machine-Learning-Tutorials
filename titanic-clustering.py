@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn import preprocessing, model_selection
+from sklearn import preprocessing
 import pandas as pd
 
 style.use('ggplot')
@@ -35,3 +35,21 @@ def handle_non_numeric_data(df):
 df = handle_non_numeric_data(df)
 # print(df.info())
 
+# df.drop(['boat'], 1, inplace=True)
+
+X = np.array(df.drop(['survived'], 1).astype(float))
+X = preprocessing.scale(X)
+y = np.array(df['survived'])
+
+clf = KMeans(n_clusters=2)
+clf.fit(X)
+
+correct = 0
+for i in range(len(X)):
+    predict_me = np.array(X[i].astype(float))
+    predict_me = predict_me.reshape(-1,len(predict_me))
+    prediction = clf.predict(predict_me)
+    if prediction[0] == y[i]:
+        correct += 1
+
+print(correct/len(X))
